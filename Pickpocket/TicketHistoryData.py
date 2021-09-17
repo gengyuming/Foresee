@@ -186,6 +186,9 @@ class LottoHistory(HistoryData):
 
         return source_no.group()
 
+    def test(self):
+        pass
+
 
 if __name__ == '__main__':
     lotto_his = LottoHistory()
