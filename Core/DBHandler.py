@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import pymysql
+import traceback
 
 from Core.Logger import log
 from Core.ConfigReader import ConfigReader
@@ -21,7 +22,7 @@ class MysqlDB:
         self.cursor = self.connection.cursor()
 
     def __init_database__(self):
-        with open('./Core/models/database_init.sql') as sql_file:
+        with open('./Core/models/database_init.sql', encoding='utf-8') as sql_file:
             sql = sql_file.read()
         self.execute_sql(sql)
 
@@ -36,6 +37,8 @@ class MysqlDB:
         try:
             self.__init_database__()
         except Exception as e:
+            log(e)
+            log(traceback.format_exc())
             log('database exist')
 
         if self.__database__:
