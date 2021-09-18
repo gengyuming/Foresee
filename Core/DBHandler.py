@@ -1,20 +1,29 @@
 # -*- encoding: utf-8 -*-
 
 import pymysql
-import pymongo
 
 from Core.Logger import log
+from Core.ConfigReader import ConfigReader
+
+
+config_path = './Core/config.ini'
 
 
 class MysqlDB:
-    def __init__(self, config, env):
-        section_name = env.upper() + '.' + 'Mysql'
-        self.__host__ = config.get(section_name, 'host')
-        self.__port__ = int(config.get(section_name, 'port'))
-        self.__username__ = config.get(section_name, 'username')
-        self.__password__ = config.get(section_name, 'password')
+    def __init__(self, config):
+        self.__config_section__ = 'Mysql'
+        self.__host__ = config.get(self.__config_section__, 'host')
+        self.__port__ = int(config.get(self.__config_section__, 'port'))
+        self.__username__ = config.get(self.__config_section__, 'username')
+        self.__password__ = config.get(self.__config_section__, 'password')
+        self.__database__ = config.get(self.__config_section__, 'database')
         self.connection = self.create_connection()
         self.cursor = self.connection.cursor()
+
+    def __init_database__(self):
+        with open('./Core/models/database_init.sql') as sql_file:
+            sql = sql_file.read()
+        self.execute_sql(sql)
 
     def create_connection(self):
         self.connection = pymysql.connect(host=self.__host__,
@@ -23,6 +32,14 @@ class MysqlDB:
                                           password=self.__password__,
                                           charset='utf8',
                                           cursorclass=pymysql.cursors.DictCursor)
+
+        try:
+            self.__init_database__()
+        except Exception as e:
+            log('database exist')
+
+        if self.__database__:
+            self.connection.select_db(self.__database__)
 
         return self.connection
 
@@ -47,18 +64,24 @@ class MysqlDB:
         # 激活连接
         self.connection.ping()
 
-        log('————————数据库执行————————')
-        log('Database: {}'.format(database))
-        log(sql)
+        log_list = [
+            '————————数据库执行————————',
+            'Database: {}'.format(database),
+            'SQL:\n{}'.format(sql)
+        ]
+
         if database:
             use_database_sql = 'USE {}'.format(database)
             self.cursor.execute(use_database_sql)
         rows = self.cursor.execute(sql)
         result = self.cursor.fetchall()
         self.connection.commit()
-        log('执行结果数量: {}'.format(rows))
-        log('执行结果\n{}'.format(result))
-        log('————————数据库执行结束————————')
+        log_list.append('执行结果数量: {}'.format(rows))
+        log_list.append('执行结果\n{}'.format(result))
+        log_list.append('————————数据库执行结束————————')
+
+        log_content = '\n'.join(log_list)
+        log(log_content)
 
         return result
 
@@ -66,68 +89,7 @@ class MysqlDB:
         return self.connection.thread_id()
 
 
-class MongoDB:
-    def __init__(self, config, env):
-        section_name = env.upper() + '.' + 'Mongo'
-        self.__connection__ = None
-        self.__collections__ = None
-        self.__host__ = config.get(section_name, 'host')
-        self.__username__ = config.get(section_name, 'username')
-        self.__password__ = config.get(section_name, 'password')
-        self.__database__ = config.get(section_name, 'database')
-        self.__init_connection__()
+conf = ConfigReader.load_config(config_path)
+mysql_conn = MysqlDB(conf)
 
-    def __del__(self):
-        if self.__connection__ is not None:
-            self.__connection__.close()
 
-    def __init_connection__(self):
-        self.__connection__ = pymongo.MongoClient(
-            'mongodb://{}:{}@{}'.format(
-                self.__username__,
-                self.__password__,
-                self.__host__
-            )
-        )
-
-        self.__collections__ = self.__connection__[self.__database__]
-
-    def find_one(self, collection, condition=''):
-        log(collection)
-        log(condition)
-        result = self.__collections__[collection].find_one(condition)
-
-        if result is None:
-            return_value = {}
-        else:
-            return_value = result
-
-        return return_value
-
-    def find(self, collection, condition=None):
-        log(collection)
-        log(condition)
-        if condition is None:
-            condition = {}
-
-        return_value = []
-        result = self.__collections__[collection].find(condition)
-
-        for document in result:
-            return_value.append(document)
-
-        return return_value
-
-    def update(self, collection, condition, value):
-        log(collection)
-        log(condition)
-        log(value)
-        return_value = []
-        result = self.__collections__[collection].update(
-            condition,
-            value
-        )
-
-        return_value.append(result)
-
-        return return_value

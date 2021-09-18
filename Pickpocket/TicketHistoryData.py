@@ -7,9 +7,10 @@ import requests
 import pdfplumber
 
 from Core.Request import Request
+from Core.DBHandler import mysql_conn
 
-double_color_ball_history_url = 'https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=85&provinceId=0&pageSize=30&isVerify=1&pageNo=1'
-lotto_api_history_url = 'https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry'
+# double_color_ball_history_url = 'https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=85&provinceId=0&pageSize=30&isVerify=1&pageNo=1'
+# lotto_api_history_url = 'https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry'
 
 
 class HistoryData:
@@ -23,14 +24,11 @@ class HistoryData:
 class LottoHistory(HistoryData):
     def __init__(self):
         super().__init__()
-        self.method = 'GET'
-        self.url = 'https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry'
-        self.headers = {}
         self.csv_file_path = r'D:\workspace\myGitHub\Foresee\SourceData\LottoHistoryData.csv'
         self.csv_headers = ['lotteryDrawNum', 'lotteryDrawResult', 'lotteryDrawTime']
         self.csv_header_cn = {'lotteryDrawNum': '期号',
-                              'lotteryDrawResult': '开奖日期',
-                              'lotteryDrawTime': '开奖结果'}
+                              'lotteryDrawResult': '开奖结果',
+                              'lotteryDrawTime': '开奖日期'}
 
     def sort_data(self, data_list):
         pass
