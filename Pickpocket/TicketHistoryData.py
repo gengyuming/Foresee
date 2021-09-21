@@ -9,6 +9,7 @@ import pdfplumber
 from Core.Request import Request
 from Core.DBHandler import mysql_conn
 
+
 # double_color_ball_history_url = 'https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry?gameNo=85&provinceId=0&pageSize=30&isVerify=1&pageNo=1'
 # lotto_api_history_url = 'https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry'
 
@@ -19,6 +20,67 @@ class HistoryData:
 
         self.csv_file_path = ''
         self.csv_headers = []
+
+    def set_csv_save_path(self, path):
+        self.csv_file_path = path
+
+    def save_csv(self, headers, rows):
+        with open(self.csv_file_path, 'w+', newline='') as file:
+            csv_writer = csv.DictWriter(file, self.csv_headers)
+            csv_writer.writeheader()
+            csv_writer.writerows(rows)
+
+
+class OpenApi:
+    def __init__(self):
+        self.default_headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36'
+        }
+
+    def lotto_history_api(self):
+        url = 'https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry'
+
+        pre_payload = {
+            'gameNo': 85,
+            'provinceId': 0,
+            'pageSize': 30,
+            'isVerify': 1,
+            'pageNo': 1
+        }
+
+        pre_response = requests.get(url=url,
+                                    headers=self.default_headers,
+                                    params=pre_payload)
+
+        pre_response_obj = json.loads(pre_response.content)
+
+        if pre_response.status_code == 200 and pre_response_obj['success']:
+            total = pre_response_obj['value']['total']
+        else:
+            raise Exception('Request Error')
+
+        payload = {
+            'gameNo': 85,
+            'provinceId': 0,
+            'pageSize': total + 1,
+            'isVerify': 1,
+            'pageNo': 1
+        }
+        print(payload)
+
+        response = requests.get(url=url,
+                                headers=self.default_headers,
+                                params=payload)
+
+        response_obj = json.loads(response.content)
+
+        if response.status_code == 200 and response_obj['success']:
+            return response_obj['value']
+        else:
+            raise Exception('Request Error')
+
+
+open_api = OpenApi()
 
 
 class LottoHistory(HistoryData):
@@ -34,60 +96,43 @@ class LottoHistory(HistoryData):
         pass
 
     def init_api_history_data(self):
-        url = 'https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry'
-        payload = {
-            'gameNo': 85,
-            'provinceId': 0,
-            'pageSize': 30000,
-            'isVerify': 1,
-            'pageNo': 1
-        }
+        resp = open_api.lotto_history_api()
+        for value in resp['list']:
+            print(value)
 
-        response = requests.get(url=url,
-                                headers=self.default_headers,
-                                json=payload)
-
-        response_content = response.content.decode('utf-8')
-        response_obj = json.loads(response_content)
-
-        if response_obj['success']:
-            pages = response_obj['value']['pages']
-        else:
-            raise Exception('Request Error')
-
-        history_list = []
-        for index in range(1, pages + 1):
-            payload = {
-                'gameNo': 85,
-                'provinceId': 0,
-                'pageSize': 30,
-                'isVerify': 1,
-                'pageNo': index
-            }
-            response = requests.get(url=url,
-                                    headers=self.default_headers,
-                                    json=payload)
-
-            response_content = response.content.decode('utf-8')
-            response_obj = json.loads(response_content)
-            data_list = response_obj['value']['list']
-            for data in data_list:
-                current_data = {'lotteryDrawNum': data['lotteryDrawNum'],
-                                'lotteryDrawResult': data['lotteryDrawResult'],
-                                'lotteryDrawTime': data['lotteryDrawTime']}
-                history_list.append(current_data)
-
-        with open(self.csv_file_path, 'w+', newline='') as file:
-            csv_writer = csv.DictWriter(file, self.csv_headers)
-            csv_writer.writeheader()
-            csv_writer.writerows(history_list)
+        # history_list = []
+        # for index in range(1, pages + 1):
+        #     payload = {
+        #         'gameNo': 85,
+        #         'provinceId': 0,
+        #         'pageSize': 30,
+        #         'isVerify': 1,
+        #         'pageNo': index
+        #     }
+        #     response = requests.get(url=url,
+        #                             headers=self.default_headers,
+        #                             json=payload)
+        #
+        #     response_content = response.content.decode('utf-8')
+        #     response_obj = json.loads(response_content)
+        #     data_list = response_obj['value']['list']
+        #     for data in data_list:
+        #         current_data = {'lotteryDrawNum': data['lotteryDrawNum'],
+        #                         'lotteryDrawResult': data['lotteryDrawResult'],
+        #                         'lotteryDrawTime': data['lotteryDrawTime']}
+        #         history_list.append(current_data)
+        #
+        # with open(self.csv_file_path, 'w+', newline='') as file:
+        #     csv_writer = csv.DictWriter(file, self.csv_headers)
+        #     csv_writer.writeheader()
+        #     csv_writer.writerows(history_list)
 
     def update_api_history_data(self):
         url = 'https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry'
         payload = {
             'gameNo': 85,
             'provinceId': 0,
-            'pageSize': 30000,
+            'pageSize': 3000,
             'isVerify': 1,
             'pageNo': 1
         }
@@ -190,5 +235,4 @@ class LottoHistory(HistoryData):
 
 if __name__ == '__main__':
     lotto_his = LottoHistory()
-    print(lotto_his.get_response_content())
-    # lotto_his.update_api_history_data()
+    lotto_his.init_api_history_data()

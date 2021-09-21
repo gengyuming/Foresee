@@ -1,6 +1,7 @@
 CREATE DATABASE IF NOT EXISTS foresee DEFAULT CHARACTER  SET utf8mb4 DEFAULT COLLATE utf8mb4_0900_ai_ci;
+--sql-split
 USER foresee;
-
+--sql-split
 CREATE TABLE `ticket_history` (
   `id` int NOT NULL AUTO_INCREMENT,
   `draw_number` int DEFAULT NULL,

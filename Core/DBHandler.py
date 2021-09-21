@@ -21,11 +21,6 @@ class MysqlDB:
         self.connection = self.create_connection()
         self.cursor = self.connection.cursor()
 
-    def __init_database__(self):
-        with open('./Core/models/database_init.sql', encoding='utf-8') as sql_file:
-            sql = sql_file.read()
-        self.execute_sql(sql)
-
     def create_connection(self):
         self.connection = pymysql.connect(host=self.__host__,
                                           port=self.__port__,
@@ -33,13 +28,6 @@ class MysqlDB:
                                           password=self.__password__,
                                           charset='utf8',
                                           cursorclass=pymysql.cursors.DictCursor)
-
-        try:
-            self.__init_database__()
-        except Exception as e:
-            log(e)
-            log(traceback.format_exc())
-            log('database exist')
 
         if self.__database__:
             self.connection.select_db(self.__database__)
@@ -92,7 +80,7 @@ class MysqlDB:
         return self.connection.thread_id()
 
 
-conf = ConfigReader.load_config(config_path)
-mysql_conn = MysqlDB(conf)
+__conf__ = ConfigReader.load_config(config_path)
+mysql_conn = MysqlDB(__conf__)
 
 
