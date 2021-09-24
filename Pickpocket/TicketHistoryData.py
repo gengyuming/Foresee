@@ -5,45 +5,18 @@ import re
 
 import requests
 import pdfplumber
+import pytesseract
+from PIL import Image
+import bs4
 
 from Core.Request import Request
 from Core.DBHandler import mysql_conn
 from Core.TicketEnum import TicketType
+from Core.ConfigReader import core_config
 
 
-class HistoryData:
-    def __init__(self):
-        self.default_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36'}
-
-        self.csv_file_path = ''
-        self.csv_headers = []
-
-    def set_csv_save_path(self, path):
-        self.csv_file_path = path
-
-    def save_csv(self, rows):
-        with open(self.csv_file_path, 'w+', newline='') as file:
-            csv_writer = csv.DictWriter(file, self.csv_headers)
-            csv_writer.writeheader()
-            csv_writer.writerows(rows)
-
-    @staticmethod
-    def save_db_api_info(rows):
-        for row in rows:
-            sql = "INSERT INTO `foresee`.`ticket_history`(`draw_number`, `draw_sort_result`, `draw_time`, `ticket_type`) " \
-                  "VALUES ('{draw_number}', '{draw_sort_result}', '{draw_time}', {ticket_type});".format(draw_number=row.get('draw_number'),
-                                                                                                         draw_sort_result=row.get('draw_sort_result'),
-                                                                                                         draw_time=row.get('draw_time'),
-                                                                                                         ticket_type=row.get('ticket_type'))
-            mysql_conn.execute_sql(sql)
-
-    @staticmethod
-    def update_source_result(draw_number, draw_source_result):
-        sql = 'UPDATE `foresee`.`ticket_history` SET draw_source_result={draw_source_result}} WHERE draw_number="{draw_number}"'.format(
-            draw_source_result=draw_source_result,
-            draw_number=draw_number
-        )
-        mysql_conn.execute_sql(sql)
+pytesseract_path = tesseract_cmd = core_config.get('tesseract_orc', 'tesseract_cmd')
+pytesseract.pytesseract.tesseract_cmd = pytesseract_path
 
 
 class OpenApi:
@@ -97,13 +70,57 @@ class OpenApi:
     @staticmethod
     def lotto_pdf_api(draw_number):
         url = 'https://pdf.sporttery.cn/33800/{draw_number}/{draw_number}.pdf'.format(draw_number=draw_number)
+        print(url)
         response = requests.get(url)
         content = response.content
 
         return content
 
+    def lotto_image_api(self, draw_number):
+        url = 'https://static.sporttery.cn/cms/upload/20190710/20190710210507857.jpg'
+        print(url)
+        response = requests.get(url)
+        content = response.content.decode('utf-8')
+
+        return content
+
 
 open_api = OpenApi()
+
+
+class HistoryData:
+    def __init__(self):
+        self.default_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36'}
+
+        self.csv_file_path = ''
+        self.csv_headers = []
+
+    def set_csv_save_path(self, path):
+        self.csv_file_path = path
+
+    def save_csv(self, rows):
+        with open(self.csv_file_path, 'w+', newline='') as file:
+            csv_writer = csv.DictWriter(file, self.csv_headers)
+            csv_writer.writeheader()
+            csv_writer.writerows(rows)
+
+    @staticmethod
+    def save_db_api_info(rows):
+        for row in rows:
+            sql = "INSERT INTO `foresee`.`ticket_history`(`draw_number`, `draw_sort_result`, `draw_time`, `ticket_type`) " \
+                  "VALUES ('{draw_number}', '{draw_sort_result}', '{draw_time}', {ticket_type});".format(draw_number=row.get('draw_number'),
+                                                                                                         draw_sort_result=row.get('draw_sort_result'),
+                                                                                                         draw_time=row.get('draw_time'),
+                                                                                                         ticket_type=row.get('ticket_type'))
+            mysql_conn.execute_sql(sql)
+
+    @staticmethod
+    def update_db_source_result(draw_number, draw_source_result):
+        sql = 'UPDATE `foresee`.`ticket_history` SET draw_source_result="{draw_source_result}" WHERE draw_number="{draw_number}"'.format(
+            draw_source_result=draw_source_result,
+            draw_number=draw_number
+        )
+        mysql_conn.execute_sql(sql)
 
 
 class LottoHistory(HistoryData):
@@ -129,7 +146,7 @@ class LottoHistory(HistoryData):
                     'draw_number': value.get('lotteryDrawNum'),
                     'draw_sort_result': value.get('lotteryDrawResult'),
                     'draw_time': value.get('lotteryDrawTime'),
-                    'ticket_type': TicketType.lotto
+                    'ticket_type': TicketType.LOTTO
                 }
             )
 
@@ -143,15 +160,13 @@ class LottoHistory(HistoryData):
         api_result = self.get_format_api_history_data()
         self.save_db_api_info(api_result)
 
-    def update_db_source_result(self):
+    def add_db_source_result(self):
         rows = mysql_conn.execute_sql('SELECT * FROM `foresee`.`ticket_history`')
         for row in rows:
-            draw_number = row.get('draw_number')
-            draw_source_result = self.get_pdf_source_result(draw_number)
-            mysql_conn.execute_sql('UPDATE draw_source_result SET draw_source_result={draw_source_result} WHERE draw_number={draw_number}'.format(
-                draw_source_result=draw_source_result,
-                draw_number=draw_number
-            ))
+            if not row.get('draw_source_result'):
+                draw_number = row.get('draw_number')
+                draw_source_result = self.get_pdf_source_result(draw_number)
+                self.update_db_source_result(draw_number, draw_source_result)
 
     @staticmethod
     def get_pdf_source_result(draw_number):
@@ -164,11 +179,30 @@ class LottoHistory(HistoryData):
             text = page01.extract_text()  # 提取文本
             # print(text)
             source_no = re.search('(?<=本期出球顺序： ).*?(?=\n)', text)
-            print(source_no.group())
+            # print(source_no.group())
 
         return source_no.group()
 
+    def get_img_source_result(self, draw_number):
 
-if __name__ == '__main__':
-    lotto_his = LottoHistory()
-    lotto_his.init_api_history_data()
+        image_content = open_api.lotto_image_api(draw_number)
+        image_full = Image.open(image_content)
+        # 裁剪截图成验证码图片
+        box = (
+            300,
+            145,
+            680,
+            180
+        )
+
+        image_crop= image_full.crop(box)
+        image_crop = image_crop.convert('L')
+        # image_crop_prop.save('./test_crop1.png')
+
+        config_str = '--psm 6 --oem 3 -c tessedit_char_whitelist=0123456789'
+        prop_result = pytesseract.image_to_string(image_crop, lang='eng', config=config_str).strip()
+
+
+# if __name__ == '__main__':
+#     lotto_his = LottoHistory()
+#     lotto_his.init_api_history_data()

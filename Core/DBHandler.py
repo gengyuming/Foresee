@@ -68,7 +68,7 @@ class MysqlDB:
         result = self.cursor.fetchall()
         self.connection.commit()
         log_list.append('执行结果数量: {}'.format(rows))
-        log_list.append('执行结果\n{}'.format(result))
+        # log_list.append('执行结果\n{}'.format(result))
         log_list.append('————————数据库执行结束————————')
 
         log_content = '\n'.join(log_list)
