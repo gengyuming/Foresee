@@ -7,7 +7,7 @@ import requests
 import pdfplumber
 import pytesseract
 from PIL import Image
-import bs4
+from bs4 import BeautifulSoup
 
 from Core.Request import Request
 from Core.DBHandler import mysql_conn
@@ -76,8 +76,9 @@ class OpenApi:
 
         return content
 
-    def lotto_image_api(self, draw_number):
-        url = 'https://static.sporttery.cn/cms/upload/20190710/20190710210507857.jpg'
+    @staticmethod
+    def lotto_image_source_api(draw_number):
+        url = 'https://www.sporttery.cn/kj/lskj/3{draw_number}.html'.format(draw_number=draw_number)
         print(url)
         response = requests.get(url)
         content = response.content.decode('utf-8')
@@ -164,9 +165,13 @@ class LottoHistory(HistoryData):
         rows = mysql_conn.execute_sql('SELECT * FROM `foresee`.`ticket_history`')
         for row in rows:
             if not row.get('draw_source_result'):
-                draw_number = row.get('draw_number')
-                draw_source_result = self.get_pdf_source_result(draw_number)
-                self.update_db_source_result(draw_number, draw_source_result)
+                draw_number = int(row.get('draw_number'))
+                if draw_number > 19080:
+                    draw_source_result = self.get_pdf_source_result(draw_number)
+                    self.update_db_source_result(draw_number, draw_source_result)
+                # if draw_number <= 19080:
+                #     draw_source_result = self.get_img_source_result(draw_number)
+                #     self.update_db_source_result(draw_number, draw_source_result)
 
     @staticmethod
     def get_pdf_source_result(draw_number):
@@ -183,10 +188,22 @@ class LottoHistory(HistoryData):
 
         return source_no.group()
 
+    @staticmethod
+    def get_img_content(draw_number):
+        html_content = open_api.lotto_image_source_api(draw_number)
+        soup = BeautifulSoup(html_content, 'html.parser')
+        img_tag = soup.find('img')
+        img_src = img_tag.attrs['src']
+        img_resp = requests.get('http:' + img_src)
+        img_content = img_resp.content
+
+        return img_content
+
     def get_img_source_result(self, draw_number):
 
-        image_content = open_api.lotto_image_api(draw_number)
-        image_full = Image.open(image_content)
+        image_content = self.get_img_content(draw_number)
+        image_io = io.BytesIO(image_content)
+        image_full = Image.open(image_io)
         # 裁剪截图成验证码图片
         box = (
             300,
@@ -200,7 +217,9 @@ class LottoHistory(HistoryData):
         # image_crop_prop.save('./test_crop1.png')
 
         config_str = '--psm 6 --oem 3 -c tessedit_char_whitelist=0123456789'
-        prop_result = pytesseract.image_to_string(image_crop, lang='eng', config=config_str).strip()
+        result = pytesseract.image_to_string(image_crop, lang='eng', config=config_str).strip()
+
+        return result
 
 
 # if __name__ == '__main__':

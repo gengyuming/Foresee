@@ -3,17 +3,20 @@ from lxml import etree
 import requests
 
 
-url = 'https://www.lottery.gov.cn/kj/kjxq.html?319075'
+url = 'https://www.sporttery.cn/kj/lskj/319075.html'
 response = requests.get(url)
 
-# selector = etree.HTML(response.content)
-#
-# image_url = selector.xpath('/html/body/div/div[1]/div/article/div[2]/p/img')
-# print(image_url.attrib['src'])
+
 
 soup = BeautifulSoup(response.content, 'html.parser')
-image = soup.find('img')
+# print(soup.prettify())
+img_tag = soup.find('img')
+img_src = img_tag.attrs['src']
+img_resp = requests.get('http:' + img_src)
+print(img_tag)
+print(img_src)
 
-print(image)
+
+print(img_resp.content)
 
 

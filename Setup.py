@@ -7,6 +7,7 @@ lotto_history = LottoHistory()
 # lotto_history.add_api_lotto_history_db_data()
 
 # 更新DB source result
-# lotto_history.add_db_source_result()
+lotto_history.add_db_source_result()
 
-lotto_history.get_img_source_result(19079)
+
+# lotto_history.get_img_source_result(19079)
