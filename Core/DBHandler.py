@@ -55,9 +55,13 @@ class MysqlDB:
         # 激活连接
         self.connection.ping()
 
+        current_database = database
+        if self.__database__:
+            current_database = self.__database__
+
         log_list = [
             '————————数据库执行————————',
-            'Database: {}'.format(database),
+            'Database: {}'.format(current_database),
             'SQL:\n{}'.format(sql)
         ]
 
