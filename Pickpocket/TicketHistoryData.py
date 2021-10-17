@@ -183,7 +183,8 @@ class LottoHistory(HistoryData):
 
         return source_no.group()
 
-    def get_img_source_result(self, draw_number):
+    @staticmethod
+    def get_img_source_result(draw_number):
 
         image_content = open_api.lotto_image_api(draw_number)
         image_full = Image.open(image_content)
