@@ -178,13 +178,14 @@ class LottoHistory(HistoryData):
 
         pdf_content = open_api.lotto_pdf_api(draw_number)
         content_io = io.BytesIO(pdf_content)
+        # print(pdf_content)
 
-        with pdfplumber.open(content_io) as pdf:
+        with pdfplumber.open(content_io, password=b'') as pdf:
             page01 = pdf.pages[0]  # 指定页码
             text = page01.extract_text()  # 提取文本
-            # print(text)
+            print(text)
             source_no = re.search('(?<=本期出球顺序： ).*?(?=\n)', text)
-            # print(source_no.group())
+            print(source_no.group())
 
         return source_no.group()
 
@@ -222,6 +223,7 @@ class LottoHistory(HistoryData):
         return result
 
 
-# if __name__ == '__main__':
-#     lotto_his = LottoHistory()
-#     lotto_his.init_api_history_data()
+if __name__ == '__main__':
+    lotto_his = LottoHistory()
+    result = lotto_his.get_pdf_source_result(21060)
+    print(result)
