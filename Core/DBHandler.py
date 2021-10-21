@@ -4,7 +4,7 @@ import pymysql
 import traceback
 
 from Core.Logger import log
-from Core.ConfigReader import ConfigReader
+from Core.Configurator import Configurator
 
 
 config_path = './Core/config.ini'
@@ -84,7 +84,7 @@ class MysqlDB:
         return self.connection.thread_id()
 
 
-__conf__ = ConfigReader.load_config(config_path)
+__conf__ = Configurator.load_config(config_path)
 mysql_conn = MysqlDB(__conf__)
 
 

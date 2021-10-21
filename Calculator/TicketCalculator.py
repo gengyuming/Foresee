@@ -1,4 +1,5 @@
 from Core.DBHandler import mysql_conn
+from Calculator import calculator_config
 
 
 lotto_stages = {
@@ -8,31 +9,30 @@ lotto_stages = {
 
 class LottoCalculator:
     def __init__(self):
-        self.factors_multiple = {
-            'time': 1,
-            'offset': 1,
-            'unknown': 1
-        }
+        config_factors = calculator_config.options('Lotto')
 
-    def set_factors(self, **kwargs):
-        for factor, multiple in kwargs.items():
-            if factor in self.factors_multiple.keys():
-                self.factors_multiple[factor] = multiple
+        self.factors = {}
+        for factor in config_factors:
+            self.factors[factor] = calculator_config.get('Lotto', factor)
 
     @staticmethod
-    def calculate_offset(result_type='source'):
+    def get_results(result_type='source'):
         sql = 'SELECT * FROM ticket_history'
         rows = mysql_conn.execute_sql(sql)
-        offset = {}
+        results = {}
         if result_type == 'sort':
             for row in rows:
-                offset[row.get('draw_number')] = row.get('draw_sort_result')
+                results[row.get('draw_number')] = row.get('draw_sort_result')
         if result_type == 'source':
             for row in rows:
                 if row.get('draw_source_result'):
-                    offset[row.get('draw_number')] = row.get('draw_source_result')
+                    results[row.get('draw_number')] = row.get('draw_source_result')
 
-        return offset
+        return results
+
+
+lc = LottoCalculator()
+
 
 
 

@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 from Core.Request import Request
 from Core.DBHandler import mysql_conn
 from Core.TicketEnum import TicketType
-from Core.ConfigReader import core_config
+from Core import core_config
 
 
 pytesseract_path = tesseract_cmd = core_config.get('tesseract_orc', 'tesseract_cmd')
