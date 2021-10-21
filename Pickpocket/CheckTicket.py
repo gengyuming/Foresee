@@ -52,6 +52,9 @@ class CheckLottoTicket(CheckTicket):
         self.check_tickets = []
 
     def match_rules(self, win_pro_zone_no, win_post_zone_no):
+        print('前区正确个数： ' + str(win_pro_zone_no))
+        print('后区正确个数： ' + str(win_post_zone_no))
+
         bonus = {
             '一等奖': '浮动',
             '二等奖': '浮动',
@@ -121,6 +124,9 @@ class CheckDoubleColorTicket(CheckTicket):
         self.check_tickets = []
 
     def match_rules(self, win_pro_zone_no, win_post_zone_no):
+        print('前区正确个数： ' + str(win_pro_zone_no))
+        print('后区正确个数： ' + str(win_post_zone_no))
+
         bonus = {
             '一等奖': '浮动',
             '二等奖': '浮动',
@@ -168,16 +174,16 @@ class CheckDoubleColorTicket(CheckTicket):
 
 
 if __name__ == '__main__':
-    win_ticket = '10 29 28 11 03 09 13'
+    win_ticket = '05 10 21 25 31 05 11'
     check_tickets = [
-        '02 06 07 10 19 26 06',
-        '04 08 09 10 32 33 07',
-        '02 03 06 18 19 22 15',
-        '16 19 21 27 29 33 04',
-        '05 09 21 25 28 32 07'
+        '07 13 17 20 27 09 10',
+        '07 15 17 25 33 03 10',
+        '08 12 26 27 32 07 10',
+        '05 07 19 26 35 09 11',
+        '11 12 14 23 29 10 11'
     ]
-    # lotto_check = CheckLottoTicket(win_ticket)
-    # lotto_check.check(check_tickets)
+    lotto_check = CheckLottoTicket(win_ticket)
+    lotto_check.check(check_tickets)
 
-    double_color_check = CheckDoubleColorTicket(win_ticket)
-    double_color_check.check(check_tickets)
+    # double_color_check = CheckDoubleColorTicket(win_ticket)
+    # double_color_check.check(check_tickets)

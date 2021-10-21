@@ -39,6 +39,7 @@ class LottoCalculator:
         """
         for data in data_list:
             current_date = data['draw_time'].replace('-', '')
+            print(current_date)
 
 
 
