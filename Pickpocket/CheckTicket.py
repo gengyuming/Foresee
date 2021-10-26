@@ -1,8 +1,8 @@
 
 class CheckTicket:
     def __init__(self, win_ticket):
-        self.pro_zone_times = 5
-        self.post_zone_times = 2
+        self.pro_zone_times = 6
+        self.post_zone_times = 1
 
         self.win_pro_zone = []
         self.win_post_zone = []
@@ -174,16 +174,16 @@ class CheckDoubleColorTicket(CheckTicket):
 
 
 if __name__ == '__main__':
-    win_ticket = '05 10 21 25 31 05 11'
+    win_ticket = '04 12 28 18 05 15 07'
     check_tickets = [
-        '07 13 17 20 27 09 10',
-        '07 15 17 25 33 03 10',
-        '08 12 26 27 32 07 10',
-        '05 07 19 26 35 09 11',
-        '11 12 14 23 29 10 11'
+        '06 09 10 14 15 27 11',
+        '02 15 29 30 32 33 07',
+        '15 19 21 23 25 27 05',
+        '04 08 11 20 29 33 13',
+        '02 20 22 29 31 32 07'
     ]
-    lotto_check = CheckLottoTicket(win_ticket)
-    lotto_check.check(check_tickets)
+    # lotto_check = CheckLottoTicket(win_ticket)
+    # lotto_check.check(check_tickets)
 
-    # double_color_check = CheckDoubleColorTicket(win_ticket)
-    # double_color_check.check(check_tickets)
+    double_color_check = CheckDoubleColorTicket(win_ticket)
+    double_color_check.check(check_tickets)
