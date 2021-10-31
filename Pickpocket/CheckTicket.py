@@ -12,6 +12,9 @@ class CheckTicket:
     def check(self, tickets):
         self.win_pro_zone = self.win_ticket[:self.pro_zone_times]
         self.win_post_zone = self.win_ticket[-self.post_zone_times:]
+
+        total_bonus = 0
+
         for ticket in tickets:
             ticket = ticket.split(' ')
             print(self.win_ticket)
@@ -22,6 +25,8 @@ class CheckTicket:
             win_post_zone_no = self.check_post_zone_no(ticket_post_zone)
             bonus = self.match_rules(win_pro_zone_no, win_post_zone_no)
             print(bonus)
+            total_bonus += int(bonus[1])
+        print('共计中奖金额： ' + str(total_bonus))
 
     def check_pro_zone_no(self, ticket_pro_zone):
         win_pro_zone_no = 0
@@ -40,7 +45,7 @@ class CheckTicket:
         return win_post_zone_no
 
     def match_rules(self, win_pro_zone_no, win_post_zone_no):
-        pass
+        return '奖励等级', '金额'
 
 
 class CheckLottoTicket(CheckTicket):
@@ -174,16 +179,27 @@ class CheckDoubleColorTicket(CheckTicket):
 
 
 if __name__ == '__main__':
-    win_ticket = '04 12 28 18 05 15 07'
-    check_tickets = [
+
+    # lotto_win_ticket = '04 12 28 18 05 15 07'
+    # lottor_check_tickets = [
+    #     '06 09 10 14 15 27 11',
+    #     '02 15 29 30 32 33 07',
+    #     '15 19 21 23 25 27 05',
+    #     '04 08 11 20 29 33 13',
+    #     '02 20 22 29 31 32 07'
+    # ]
+    #
+    # lotto_check = CheckLottoTicket(lotto_win_ticket)
+    # lotto_check.check(lottor_check_tickets)
+
+    double_color_win_ticket = '04 12 28 18 05 15 07'
+    double_color_check_tickets = [
         '06 09 10 14 15 27 11',
         '02 15 29 30 32 33 07',
         '15 19 21 23 25 27 05',
         '04 08 11 20 29 33 13',
         '02 20 22 29 31 32 07'
     ]
-    # lotto_check = CheckLottoTicket(win_ticket)
-    # lotto_check.check(check_tickets)
 
-    double_color_check = CheckDoubleColorTicket(win_ticket)
-    double_color_check.check(check_tickets)
+    double_color_check = CheckDoubleColorTicket(double_color_win_ticket)
+    double_color_check.check(double_color_check_tickets)
