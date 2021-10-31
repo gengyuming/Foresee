@@ -13,7 +13,7 @@ class CheckTicket:
         self.win_pro_zone = self.win_ticket[:self.pro_zone_times]
         self.win_post_zone = self.win_ticket[-self.post_zone_times:]
 
-        total_bonus = 0
+        total_bonus = []
 
         for ticket in tickets:
             ticket = ticket.split(' ')
@@ -24,9 +24,10 @@ class CheckTicket:
             win_pro_zone_no = self.check_pro_zone_no(ticket_pro_zone)
             win_post_zone_no = self.check_post_zone_no(ticket_post_zone)
             bonus = self.match_rules(win_pro_zone_no, win_post_zone_no)
-            print(bonus)
-            total_bonus += int(bonus[1])
-        print('共计中奖金额： ' + str(total_bonus))
+            if bonus[1] != '0':
+                total_bonus.append(bonus[1])
+        print(total_bonus)
+        print('共计中奖金额： ' + ', '.join(total_bonus))
 
     def check_pro_zone_no(self, ticket_pro_zone):
         win_pro_zone_no = 0
@@ -180,10 +181,10 @@ class CheckDoubleColorTicket(CheckTicket):
 
 if __name__ == '__main__':
 
-    # lotto_win_ticket = '04 12 28 18 05 15 07'
+    # lotto_win_ticket = ''
     # lottor_check_tickets = [
-    #     '06 09 10 14 15 27 11',
-    #     '02 15 29 30 32 33 07',
+    #     '02 16 24 29 31 03 05',
+    #     '12 16 23 30 35 03 10',
     #     '15 19 21 23 25 27 05',
     #     '04 08 11 20 29 33 13',
     #     '02 20 22 29 31 32 07'
