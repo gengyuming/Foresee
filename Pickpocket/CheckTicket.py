@@ -24,8 +24,7 @@ class CheckTicket:
             win_pro_zone_no = self.check_pro_zone_no(ticket_pro_zone)
             win_post_zone_no = self.check_post_zone_no(ticket_post_zone)
             bonus = self.match_rules(win_pro_zone_no, win_post_zone_no)
-            if bonus[1] != '0':
-                total_bonus.append(bonus[1])
+            total_bonus.append(bonus[1])
 
         print('共计中奖金额： ' + ', '.join(total_bonus))
 
@@ -185,9 +184,9 @@ if __name__ == '__main__':
     lottor_check_tickets = [
         '02 16 24 29 31 03 05',
         '12 16 23 30 35 03 10',
-        '06 09 ',
-        '04 08 11 20 29 33 13',
-        '02 20 22 29 31 32 07'
+        '06 09 10 11 14 01 02',
+        '01 06 07 08 18 05 12',
+        '03 18 22 26 29 02 06'
     ]
 
     lotto_check = CheckLottoTicket(lotto_win_ticket)
