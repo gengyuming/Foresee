@@ -52,8 +52,8 @@ class CheckLottoTicket(CheckTicket):
     def __init__(self, win_ticket):
         super().__init__(win_ticket)
 
-        self.red_times = 5
-        self.blue_times = 2
+        self.pro_zone_times = 5
+        self.post_zone_times = 2
         self.check_tickets = []
 
     def match_rules(self, win_pro_zone_no, win_post_zone_no):
@@ -72,8 +72,8 @@ class CheckLottoTicket(CheckTicket):
             '九等奖': '5',
             '未中奖': '0'
         }
-        red_difference = self.red_times - win_pro_zone_no
-        blue_difference = self.blue_times - win_post_zone_no
+        red_difference = self.pro_zone_times - win_pro_zone_no
+        blue_difference = self.post_zone_times - win_post_zone_no
 
         # 红5蓝2
         if red_difference == 0 and blue_difference == 0:
@@ -124,8 +124,8 @@ class CheckDoubleColorTicket(CheckTicket):
     def __init__(self, win_ticket):
         super().__init__(win_ticket)
 
-        self.red_times = 6
-        self.blue_times = 1
+        self.pro_zone_times = 6
+        self.post_zone_times = 1
         self.check_tickets = []
 
     def match_rules(self, win_pro_zone_no, win_post_zone_no):
@@ -141,8 +141,8 @@ class CheckDoubleColorTicket(CheckTicket):
             '六等奖': '5',
             '未中奖': '0'
         }
-        red_difference = self.red_times - win_pro_zone_no
-        blue_difference = self.blue_times - win_post_zone_no
+        red_difference = self.pro_zone_times - win_pro_zone_no
+        blue_difference = self.post_zone_times - win_post_zone_no
 
         # 红6蓝1
         if red_difference == 0 and blue_difference == 0:
@@ -180,17 +180,17 @@ class CheckDoubleColorTicket(CheckTicket):
 
 if __name__ == '__main__':
 
-    lotto_win_ticket = '08 23 26 27 33 08 09'
-    lottor_check_tickets = [
-        '02 16 24 29 31 03 05',
-        '12 16 23 30 35 03 10',
-        '06 09 10 11 14 01 02',
-        '01 06 07 08 18 05 12',
-        '03 18 22 26 29 02 06'
+    lotto_win_ticket = '04 21 28 29 33 03 11'
+    lotto_check_tickets = [
+        '06 18 21 24 28 02 06',
+        '02 07 16 27 28 03 12',
+        '11 13 18 29 34 01 07',
+        '09 23 27 28 35 03 05',
+        '15 16 17 18 26 11 12'
     ]
 
     lotto_check = CheckLottoTicket(lotto_win_ticket)
-    lotto_check.check(lottor_check_tickets)
+    lotto_check.check(lotto_check_tickets)
 
     # double_color_win_ticket = '04 12 28 18 05 15 07'
     # double_color_check_tickets = [
