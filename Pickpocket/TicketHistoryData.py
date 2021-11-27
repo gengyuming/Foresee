@@ -13,6 +13,7 @@ from Core.Request import Request
 from Core.DBHandler import mysql_conn
 from Core.TicketEnum import TicketType
 from Core import core_config
+from Core.Logger import log
 
 
 pytesseract_path = tesseract_cmd = core_config.get('tesseract_orc', 'tesseract_cmd')
@@ -54,7 +55,7 @@ class OpenApi:
             'isVerify': 1,
             'pageNo': 1
         }
-        print(payload)
+        log(payload)
 
         response = requests.get(url=url,
                                 headers=self.default_headers,
@@ -70,7 +71,7 @@ class OpenApi:
     @staticmethod
     def lotto_pdf_api(draw_number):
         url = 'https://pdf.sporttery.cn/33800/{draw_number}/{draw_number}.pdf'.format(draw_number=draw_number)
-        print(url)
+        log(url)
         response = requests.get(url)
         content = response.content
 
@@ -79,7 +80,7 @@ class OpenApi:
     @staticmethod
     def lotto_image_source_api(draw_number):
         url = 'https://www.sporttery.cn/kj/lskj/3{draw_number}.html'.format(draw_number=draw_number)
-        print(url)
+        log(url)
         response = requests.get(url)
         content = response.content.decode('utf-8')
 
@@ -178,14 +179,14 @@ class LottoHistory(HistoryData):
 
         pdf_content = open_api.lotto_pdf_api(draw_number)
         content_io = io.BytesIO(pdf_content)
-        # print(pdf_content)
+        # log(pdf_content)
 
         with pdfplumber.open(content_io, password=b'') as pdf:
             page01 = pdf.pages[0]  # 指定页码
             text = page01.extract_text()  # 提取文本
-            print(text)
+            log(text)
             source_no = re.search('(?<=本期出球顺序： ).*?(?=\n)', text)
-            print(source_no.group())
+            log(source_no.group())
 
         return source_no.group()
 
@@ -226,4 +227,4 @@ class LottoHistory(HistoryData):
 if __name__ == '__main__':
     lotto_his = LottoHistory()
     result = lotto_his.get_pdf_source_result(21060)
-    print(result)
+    log(result)

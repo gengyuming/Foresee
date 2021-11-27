@@ -1,6 +1,8 @@
 import random
 import copy
 
+from Core.Logger import log
+
 double_color_ball = {
     'red_max_no': 33,
     'blue_max_no': 16,
@@ -26,7 +28,7 @@ class TicketRandomTool:
         self.red_balls = [i for i in range(1, self.red_max_no + 1)]
         self.blue_balls = [i for i in range(1, self.blue_max_no + 1)]
 
-        # print(len(red_balls))
+        # log(len(red_balls))
 
     def print_ticket(self):
         red_balls_copy = copy.copy(self.red_balls)
@@ -49,7 +51,7 @@ class TicketRandomTool:
 
         ticket['red_ball'] = red_ball
         ticket['blue_ball'] = blue_ball
-        print(ticket)
+        log(ticket)
 
     def print_tickets(self, times):
         ticket_list = []
@@ -77,7 +79,7 @@ class TicketRandomTool:
 
             red_zone = ' '.join(map(str, red_ball))
             blue_zone = ' '.join(map(str, blue_ball))
-            print(red_zone + ' | ' + blue_zone)
+            log(red_zone + ' | ' + blue_zone)
 
             ticket_list.append(ticket)
 

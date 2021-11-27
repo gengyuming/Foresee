@@ -1,3 +1,5 @@
+from Core.Logger import log
+
 
 class CheckTicket:
     def __init__(self, win_ticket):
@@ -17,8 +19,8 @@ class CheckTicket:
 
         for ticket in tickets:
             ticket = ticket.split(' ')
-            print(self.win_ticket)
-            print(ticket)
+            log(self.win_ticket)
+            log(ticket)
             ticket_pro_zone = ticket[:self.pro_zone_times]
             ticket_post_zone = ticket[-self.post_zone_times:]
             win_pro_zone_no = self.check_pro_zone_no(ticket_pro_zone)
@@ -26,7 +28,7 @@ class CheckTicket:
             bonus = self.match_rules(win_pro_zone_no, win_post_zone_no)
             total_bonus.append(bonus[1])
 
-        print('共计中奖金额： ' + ', '.join(total_bonus))
+        log('共计中奖金额： ' + ', '.join(total_bonus))
 
     def check_pro_zone_no(self, ticket_pro_zone):
         win_pro_zone_no = 0
@@ -57,8 +59,8 @@ class CheckLottoTicket(CheckTicket):
         self.check_tickets = []
 
     def match_rules(self, win_pro_zone_no, win_post_zone_no):
-        print('前区正确个数： ' + str(win_pro_zone_no))
-        print('后区正确个数： ' + str(win_post_zone_no))
+        log('前区正确个数： ' + str(win_pro_zone_no))
+        log('后区正确个数： ' + str(win_post_zone_no))
 
         bonus = {
             '一等奖': '浮动',
@@ -129,8 +131,8 @@ class CheckDoubleColorTicket(CheckTicket):
         self.check_tickets = []
 
     def match_rules(self, win_pro_zone_no, win_post_zone_no):
-        print('前区正确个数： ' + str(win_pro_zone_no))
-        print('后区正确个数： ' + str(win_post_zone_no))
+        log('前区正确个数： ' + str(win_pro_zone_no))
+        log('后区正确个数： ' + str(win_post_zone_no))
 
         bonus = {
             '一等奖': '浮动',
