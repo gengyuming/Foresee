@@ -43,8 +43,10 @@ class LottoCalculator:
 
 
 
-lc = LottoCalculator()
-res = lc.get_results()
+
+if __name__ == '__main__':
+    lc = LottoCalculator()
+    res = lc.get_results()
 
 
 
