@@ -182,25 +182,25 @@ class CheckDoubleColorTicket(CheckTicket):
 
 if __name__ == '__main__':
 
-    lotto_win_ticket = '04 21 28 29 33 03 11'
+    lotto_win_ticket = '07 20 27 30 33 03 04'
     lotto_check_tickets = [
-        '06 18 21 24 28 02 06',
-        '02 07 16 27 28 03 12',
-        '11 13 18 29 34 01 07',
-        '09 23 27 28 35 03 05',
-        '15 16 17 18 26 11 12'
+        '12 22 23 33 35 01 07',
+        '15 23 25 31 32 04 06',
+        '06 07 11 22 34 01 06',
+        '07 09 10 20 23 03 10',
+        '07 16 17 28 34 01 08'
     ]
 
     lotto_check = CheckLottoTicket(lotto_win_ticket)
     lotto_check.check(lotto_check_tickets)
 
-    # double_color_win_ticket = '04 12 28 18 05 15 07'
+    # double_color_win_ticket = '30 32 05 19 24 28'
     # double_color_check_tickets = [
-    #     '06 09 10 14 15 27 11',
-    #     '02 15 29 30 32 33 07',
-    #     '15 19 21 23 25 27 05',
-    #     '04 08 11 20 29 33 13',
-    #     '02 20 22 29 31 32 07'
+    #     '01 06 16 19 24 25 12',
+    #     '02 10 14 22 29 31 13',
+    #     '04 08 12 22 29 31 16',
+    #     '02 03 05 23 25 30 13',
+    #     '13 17 22 25 27 30 05'
     # ]
     #
     # double_color_check = CheckDoubleColorTicket(double_color_win_ticket)

@@ -108,6 +108,8 @@ class HistoryData:
 
     @staticmethod
     def save_db_api_info(rows):
+        truncate_table_sql = 'TRUNCATE foresee.ticket_history'
+        mysql_conn.execute_sql(truncate_table_sql)
         for row in rows:
             sql = "INSERT INTO `foresee`.`ticket_history`(`draw_number`, `draw_sort_result`, `draw_time`, `ticket_type`) " \
                   "VALUES ('{draw_number}', '{draw_sort_result}', '{draw_time}', {ticket_type});".format(draw_number=row.get('draw_number'),
