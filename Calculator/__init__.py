@@ -1,4 +1,4 @@
-from Core.Configurator import Configurator
+from Core.configurator import Configurator
 
 
 calculator_config_path = './Calculator/config.ini'

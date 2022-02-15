@@ -10,10 +10,10 @@ from PIL import Image
 from bs4 import BeautifulSoup
 
 from Core.Request import Request
-from Core.DBHandler import mysql_conn
-from Core.TicketEnum import TicketType
+from Core.db_handler import mysql_conn
+from Core.ticket_enum import TicketType
 from Core import core_config
-from Core.Logger import log
+from Core.logger import log
 
 
 pytesseract_path = tesseract_cmd = core_config.get('tesseract_orc', 'tesseract_cmd')

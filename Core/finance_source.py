@@ -1,7 +1,7 @@
 import pandas_datareader as pdr
 import fix_yahoo_finance as yf
 
-from Core.Logger import log
+from Core.logger import log
 
 yf.pdr_override('yahoo')
 start_date = "2021-3-1"

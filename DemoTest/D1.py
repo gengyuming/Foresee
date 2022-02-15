@@ -1,4 +1,4 @@
-from Core.TicketEnum import TicketType
+from Core.ticket_enum import TicketType
 import pytesseract
 from PIL import Image
 

@@ -1,4 +1,4 @@
-from Core.Configurator import Configurator
+from Core.configurator import Configurator
 
 
 core_config_path = './Core/config.ini'

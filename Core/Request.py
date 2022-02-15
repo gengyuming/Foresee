@@ -2,7 +2,7 @@ import json
 
 import requests
 
-from Core.CoreException import MethodException
+from Core.core_exception import MethodException
 
 
 class Request:

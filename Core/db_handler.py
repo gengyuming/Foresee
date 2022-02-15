@@ -3,8 +3,8 @@
 import pymysql
 import traceback
 
-from Core.Logger import log
-from Core.Configurator import Configurator
+from Core.logger import log
+from Core.configurator import Configurator
 
 
 config_path = './Core/config.ini'

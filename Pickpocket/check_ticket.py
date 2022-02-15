@@ -1,4 +1,4 @@
-from Core.Logger import log
+from Core.logger import log
 
 
 class CheckTicket:

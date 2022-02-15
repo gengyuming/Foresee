@@ -1,4 +1,4 @@
-from Pickpocket.TicketHistoryData import LottoHistory
+from Pickpocket.ticket_history_data import LottoHistory
 
 
 lotto_history = LottoHistory()

@@ -1,4 +1,4 @@
-from Core.DBHandler import mysql_conn
+from Core.db_handler import mysql_conn
 from Calculator import calculator_config
 
 

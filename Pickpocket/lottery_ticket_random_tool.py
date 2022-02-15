@@ -1,7 +1,7 @@
 import random
 import copy
 
-from Core.Logger import log
+from Core.logger import log
 
 double_color_ball = {
     'red_max_no': 33,
