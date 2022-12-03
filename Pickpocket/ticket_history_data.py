@@ -169,9 +169,20 @@ class LottoHistory(HistoryData):
         for row in rows:
             if not row.get('draw_source_result'):
                 draw_number = int(row.get('draw_number'))
+                flag = True # 判断排序号码和顺序号码一致性
                 if draw_number > 19080:
                     draw_source_result = self.get_pdf_source_result(draw_number)
-                    self.update_db_source_result(draw_number, draw_source_result)
+
+                    draw_source_result_list = draw_source_result.split(' ')
+                    draw_sort_result_list = row.get('draw_sort_result').split(' ')
+                    for dsr in draw_source_result_list:
+                        if dsr in draw_sort_result_list:
+                            log(draw_number, '排序号码和顺序号码不一致！')
+                            flag = False
+                            break
+                    if flag:
+                        self.update_db_source_result(draw_number, draw_source_result)
+
                 # if draw_number <= 19080:
                 #     draw_source_result = self.get_img_source_result(draw_number)
                 #     self.update_db_source_result(draw_number, draw_source_result)
